@@ -7,45 +7,7 @@ import {
   Smartphone 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const features = [
-  {
-    icon: Gauge,
-    title: "قياس فائق الدقة",
-    description: "تقنية متقدمة لقياس السرعة بدقة عالية جداً",
-    color: "green" as const,
-  },
-  {
-    icon: Zap,
-    title: "سرعة البرق",
-    description: "اختبار سريع يستغرق ثوانٍ معدودة فقط",
-    color: "blue" as const,
-  },
-  {
-    icon: Shield,
-    title: "خصوصية تامة",
-    description: "لا نحتفظ بأي بيانات خاصة بك",
-    color: "pink" as const,
-  },
-  {
-    icon: Globe,
-    title: "سيرفرات عالمية",
-    description: "شبكة واسعة من السيرفرات حول العالم",
-    color: "green" as const,
-  },
-  {
-    icon: BarChart3,
-    title: "تقارير مفصلة",
-    description: "إحصائيات شاملة عن أداء اتصالك",
-    color: "blue" as const,
-  },
-  {
-    icon: Smartphone,
-    title: "تصميم متجاوب",
-    description: "يعمل على جميع الأجهزة بكفاءة",
-    color: "pink" as const,
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const colorStyles = {
   green: {
@@ -69,15 +31,56 @@ const colorStyles = {
 };
 
 const Features = () => {
+  const { t } = useLanguage();
+
+  const features = [
+    {
+      icon: Gauge,
+      title: t.feature1Title,
+      description: t.feature1Desc,
+      color: "green" as const,
+    },
+    {
+      icon: Zap,
+      title: t.feature2Title,
+      description: t.feature2Desc,
+      color: "blue" as const,
+    },
+    {
+      icon: Shield,
+      title: t.feature3Title,
+      description: t.feature3Desc,
+      color: "pink" as const,
+    },
+    {
+      icon: Globe,
+      title: t.feature4Title,
+      description: t.feature4Desc,
+      color: "green" as const,
+    },
+    {
+      icon: BarChart3,
+      title: t.feature5Title,
+      description: t.feature5Desc,
+      color: "blue" as const,
+    },
+    {
+      icon: Smartphone,
+      title: t.feature6Title,
+      description: t.feature6Desc,
+      color: "pink" as const,
+    },
+  ];
+
   return (
     <section className="py-16 px-4">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 animate-fade-in">
           <h2 className="font-display text-3xl font-bold text-primary text-glow mb-4">
-            مميزات SPEDRA
+            {t.featuresTitle}
           </h2>
           <p className="text-muted-foreground font-mono">
-            تقنيات متطورة لقياس سرعة الإنترنت
+            {t.featuresSubtitle}
           </p>
         </div>
         
@@ -91,7 +94,8 @@ const Features = () => {
                 key={index}
                 className={cn(
                   "relative p-6 rounded-lg border bg-card/30 backdrop-blur-sm",
-                  "transition-all duration-500 group cursor-pointer",
+                  "transition-all duration-500 group cursor-pointer animate-fade-in",
+                  "hover:scale-105 hover:-translate-y-1",
                   styles.border,
                   styles.glow
                 )}
@@ -106,7 +110,7 @@ const Features = () => {
                 {/* Icon */}
                 <div className={cn(
                   "relative w-12 h-12 rounded-lg flex items-center justify-center mb-4",
-                  "border border-current/20",
+                  "border border-current/20 group-hover:scale-110 transition-transform duration-300",
                   styles.icon
                 )}>
                   <Icon className="w-6 h-6" />
@@ -122,11 +126,11 @@ const Features = () => {
                 
                 {/* Corner decoration */}
                 <span className={cn(
-                  "absolute top-2 right-2 w-2 h-2 border-t border-r",
+                  "absolute top-2 right-2 w-2 h-2 border-t border-r transition-all duration-300 group-hover:w-4 group-hover:h-4",
                   styles.icon
                 )} />
                 <span className={cn(
-                  "absolute bottom-2 left-2 w-2 h-2 border-b border-l",
+                  "absolute bottom-2 left-2 w-2 h-2 border-b border-l transition-all duration-300 group-hover:w-4 group-hover:h-4",
                   styles.icon
                 )} />
               </div>
