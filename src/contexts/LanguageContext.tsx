@@ -51,6 +51,8 @@ interface Translations {
   noHistory: string;
   clearHistory: string;
   date: string;
+  speedOverTime: string;
+  testDate: string;
   
   // Fullscreen
   fullscreen: string;
@@ -107,6 +109,8 @@ const translations: Record<Language, Translations> = {
     noHistory: "لا توجد نتائج سابقة",
     clearHistory: "مسح السجل",
     date: "التاريخ",
+    speedOverTime: "السرعة عبر الوقت",
+    testDate: "تاريخ الاختبار",
     
     // Fullscreen
     fullscreen: "ملء الشاشة",
@@ -161,6 +165,8 @@ const translations: Record<Language, Translations> = {
     noHistory: "No previous results",
     clearHistory: "Clear History",
     date: "Date",
+    speedOverTime: "Speed Over Time",
+    testDate: "Test Date",
     
     // Fullscreen
     fullscreen: "Fullscreen",
