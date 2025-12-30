@@ -12,12 +12,12 @@ interface TestResults {
 
 type TestPhase = "idle" | "ping" | "download" | "upload" | "complete";
 
-// Test files from Cloudflare's speed test CDN (publicly available)
+// Test files from Cloudflare's speed test CDN - optimized for speed
 const TEST_FILES = {
   small: "https://speed.cloudflare.com/__down?bytes=100000", // 100KB
-  medium: "https://speed.cloudflare.com/__down?bytes=1000000", // 1MB
-  large: "https://speed.cloudflare.com/__down?bytes=10000000", // 10MB
-  xlarge: "https://speed.cloudflare.com/__down?bytes=25000000", // 25MB
+  medium: "https://speed.cloudflare.com/__down?bytes=500000", // 500KB
+  large: "https://speed.cloudflare.com/__down?bytes=2000000", // 2MB
+  xlarge: "https://speed.cloudflare.com/__down?bytes=5000000", // 5MB
 };
 
 const UPLOAD_URL = "https://speed.cloudflare.com/__up";
@@ -37,34 +37,28 @@ export const useSpeedTest = () => {
     isp: "---",
   });
 
-  // Measure ping using multiple requests
+  // Measure ping using multiple requests (faster - 5 requests)
   const measurePing = async (): Promise<{ ping: number; jitter: number }> => {
     const pingResults: number[] = [];
     const pingUrl = "https://speed.cloudflare.com/__down?bytes=0";
     
-    for (let i = 0; i < 10; i++) {
+    // Use parallel requests for faster measurement
+    const pingPromises = Array.from({ length: 5 }, async () => {
       const start = performance.now();
       try {
-        await fetch(pingUrl, { 
-          cache: "no-store",
-          mode: "cors",
-        });
-        const end = performance.now();
-        pingResults.push(end - start);
-      } catch (e) {
-        console.log("Ping attempt failed:", e);
+        await fetch(pingUrl, { cache: "no-store", mode: "cors" });
+        return performance.now() - start;
+      } catch {
+        return null;
       }
-      await new Promise(r => setTimeout(r, 100));
-    }
+    });
+
+    const results = await Promise.all(pingPromises);
+    results.forEach(r => r !== null && pingResults.push(r));
     
-    if (pingResults.length === 0) {
-      return { ping: 0, jitter: 0 };
-    }
+    if (pingResults.length === 0) return { ping: 0, jitter: 0 };
     
-    // Calculate average ping
     const avgPing = pingResults.reduce((a, b) => a + b, 0) / pingResults.length;
-    
-    // Calculate jitter (average deviation from mean)
     const jitter = pingResults.reduce((acc, val) => acc + Math.abs(val - avgPing), 0) / pingResults.length;
     
     return { ping: Math.round(avgPing), jitter: Math.round(jitter) };
@@ -156,10 +150,23 @@ export const useSpeedTest = () => {
     return weightedSum / weightSum;
   };
 
+  // Generate random data in chunks (getRandomValues has 65536 byte limit)
+  const generateRandomData = (size: number): Uint8Array => {
+    const data = new Uint8Array(size);
+    const chunkSize = 65536;
+    for (let offset = 0; offset < size; offset += chunkSize) {
+      const length = Math.min(chunkSize, size - offset);
+      const chunk = new Uint8Array(length);
+      crypto.getRandomValues(chunk);
+      data.set(chunk, offset);
+    }
+    return data;
+  };
+
   // Measure upload speed
   const measureUpload = async (): Promise<number> => {
     const speeds: number[] = [];
-    const testSizes = [100000, 500000, 1000000]; // 100KB, 500KB, 1MB
+    const testSizes = [50000, 100000, 200000]; // Smaller sizes for faster test
     
     setProgress(0);
     let progressAccum = 0;
@@ -167,15 +174,20 @@ export const useSpeedTest = () => {
 
     for (const size of testSizes) {
       try {
-        // Generate random data
-        const data = new Uint8Array(size);
-        crypto.getRandomValues(data);
+        // Generate random data - create ArrayBuffer directly
+        const buffer = new ArrayBuffer(size);
+        const view = new Uint8Array(buffer);
+        const chunkSize = 65536;
+        for (let offset = 0; offset < size; offset += chunkSize) {
+          const length = Math.min(chunkSize, size - offset);
+          crypto.getRandomValues(view.subarray(offset, offset + length));
+        }
         
         const start = performance.now();
         
         const response = await fetch(UPLOAD_URL, {
           method: "POST",
-          body: data,
+          body: buffer,
           mode: "cors",
         });
         
