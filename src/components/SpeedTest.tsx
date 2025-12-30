@@ -1,7 +1,7 @@
-import { useState, useCallback } from "react";
 import SpeedGauge from "./SpeedGauge";
 import CyberButton from "./CyberButton";
 import DataPanel from "./DataPanel";
+import { useSpeedTest } from "@/hooks/useSpeedTest";
 import { 
   Download, 
   Upload, 
@@ -12,78 +12,23 @@ import {
   Zap
 } from "lucide-react";
 
-interface TestResults {
-  download: number;
-  upload: number;
-  ping: number;
-  jitter: number;
-  server: string;
-  ip: string;
-  isp: string;
-}
-
 const SpeedTest = () => {
-  const [testing, setTesting] = useState(false);
-  const [phase, setPhase] = useState<"idle" | "ping" | "download" | "upload" | "complete">("idle");
-  const [results, setResults] = useState<TestResults>({
-    download: 0,
-    upload: 0,
-    ping: 0,
-    jitter: 0,
-    server: "Cairo, EG",
-    ip: "---",
-    isp: "---",
-  });
-  const [currentSpeed, setCurrentSpeed] = useState(0);
-
-  const simulateSpeedTest = useCallback(async () => {
-    setTesting(true);
-    setPhase("ping");
-    
-    // Simulate ping test
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    const ping = Math.floor(Math.random() * 30) + 5;
-    const jitter = Math.floor(Math.random() * 5) + 1;
-    setResults(prev => ({ 
-      ...prev, 
-      ping, 
-      jitter,
-      ip: "102.45.xxx.xxx",
-      isp: "TE Data Egypt"
-    }));
-
-    // Simulate download test
-    setPhase("download");
-    const targetDownload = Math.floor(Math.random() * 200) + 50;
-    for (let i = 0; i <= 100; i += 2) {
-      await new Promise(resolve => setTimeout(resolve, 50));
-      const speed = (targetDownload * i / 100) + (Math.random() * 10 - 5);
-      setCurrentSpeed(Math.max(0, speed));
-    }
-    setResults(prev => ({ ...prev, download: targetDownload }));
-
-    // Simulate upload test
-    setPhase("upload");
-    const targetUpload = Math.floor(Math.random() * 50) + 20;
-    for (let i = 0; i <= 100; i += 2) {
-      await new Promise(resolve => setTimeout(resolve, 50));
-      const speed = (targetUpload * i / 100) + (Math.random() * 5 - 2.5);
-      setCurrentSpeed(Math.max(0, speed));
-    }
-    setResults(prev => ({ ...prev, upload: targetUpload }));
-
-    setPhase("complete");
-    setCurrentSpeed(0);
-    setTesting(false);
-  }, []);
+  const { testing, phase, currentSpeed, progress, results, runSpeedTest } = useSpeedTest();
 
   const getPhaseText = () => {
     switch (phase) {
       case "ping": return "جاري قياس البينج...";
-      case "download": return "جاري قياس التحميل...";
-      case "upload": return "جاري قياس الرفع...";
-      case "complete": return "اكتمل الاختبار!";
+      case "download": return `جاري قياس التحميل... ${Math.round(progress)}%`;
+      case "upload": return `جاري قياس الرفع... ${Math.round(progress)}%`;
+      case "complete": return "✓ اكتمل الاختبار!";
       default: return "جاهز للاختبار";
+    }
+  };
+
+  const getPhaseColor = () => {
+    switch (phase) {
+      case "complete": return "text-primary";
+      default: return "text-primary";
     }
   };
 
@@ -94,22 +39,38 @@ const SpeedTest = () => {
         {/* Phase indicator */}
         <div className="mb-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-primary/30 neon-border">
-            <Activity className="w-4 h-4 text-primary animate-pulse" />
-            <span className="font-mono text-sm text-primary">{getPhaseText()}</span>
+            {testing ? (
+              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Activity className={`w-4 h-4 ${getPhaseColor()} ${phase === "complete" ? "" : "animate-pulse"}`} />
+            )}
+            <span className={`font-mono text-sm ${getPhaseColor()}`}>{getPhaseText()}</span>
           </div>
+          
+          {/* Progress bar for download/upload phases */}
+          {(phase === "download" || phase === "upload") && (
+            <div className="mt-4 w-64 h-2 bg-muted rounded-full overflow-hidden mx-auto">
+              <div 
+                className={`h-full transition-all duration-300 rounded-full ${
+                  phase === "download" ? "bg-primary" : "bg-secondary"
+                }`}
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          )}
         </div>
 
         {/* Gauges */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 w-full justify-items-center">
           <SpeedGauge
             speed={phase === "download" ? currentSpeed : results.download}
-            maxSpeed={300}
+            maxSpeed={500}
             label="تحميل"
             color="green"
           />
           <SpeedGauge
             speed={phase === "upload" ? currentSpeed : results.upload}
-            maxSpeed={100}
+            maxSpeed={200}
             label="رفع"
             color="blue"
           />
@@ -133,7 +94,7 @@ const SpeedTest = () => {
 
         {/* Start Button */}
         <CyberButton
-          onClick={simulateSpeedTest}
+          onClick={runSpeedTest}
           disabled={testing}
           loading={testing}
           size="lg"
@@ -142,6 +103,12 @@ const SpeedTest = () => {
         >
           {testing ? "جاري الاختبار" : "ابدأ الاختبار"}
         </CyberButton>
+        
+        {/* Real test indicator */}
+        <p className="mt-4 text-xs text-muted-foreground font-mono flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          قياس حقيقي عبر Cloudflare CDN
+        </p>
       </div>
 
       {/* Stats Grid */}
