@@ -1,5 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Share2, Copy, Twitter, Facebook, MessageCircle, Check, Download } from "lucide-react";
+import { useSound } from "@/contexts/SoundContext";
+import { Share2, Copy, Twitter, Facebook, MessageCircle, Check } from "lucide-react";
 import { useState } from "react";
 
 interface ShareResultsProps {
@@ -14,6 +15,7 @@ interface ShareResultsProps {
 
 const ShareResults = ({ downloadSpeed, uploadSpeed, ping, jitter, server, ip, isp }: ShareResultsProps) => {
   const { t, isRTL } = useLanguage();
+  const { playSound } = useSound();
   const [copied, setCopied] = useState(false);
   const [showShare, setShowShare] = useState(false);
 
@@ -32,9 +34,11 @@ ${t.testedWith} Spedra ⚡
 https://spedra.vercel.app`;
 
   const handleCopy = async () => {
+    playSound("click");
     try {
       await navigator.clipboard.writeText(shareText);
       setCopied(true);
+      playSound("success");
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
@@ -42,24 +46,29 @@ https://spedra.vercel.app`;
   };
 
   const handleTwitterShare = () => {
+    playSound("click");
     const text = encodeURIComponent(`🚀 سرعة الإنترنت عندي:\n⬇️ ${downloadSpeed.toFixed(1)} Mbps\n⬆️ ${uploadSpeed.toFixed(1)} Mbps\n📡 ${ping}ms\n\nاختبر سرعتك مع Spedra ⚡`);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=https://spedra.vercel.app`, "_blank");
   };
 
   const handleFacebookShare = () => {
+    playSound("click");
     window.open(`https://www.facebook.com/sharer/sharer.php?u=https://spedra.vercel.app`, "_blank");
   };
 
   const handleWhatsAppShare = () => {
+    playSound("click");
     const text = encodeURIComponent(shareText);
     window.open(`https://wa.me/?text=${text}`, "_blank");
   };
 
   return (
     <div className="relative">
-      {/* Share Button */}
       <button
-        onClick={() => setShowShare(!showShare)}
+        onClick={() => {
+          playSound("click");
+          setShowShare(!showShare);
+        }}
         className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-secondary/20 to-accent/20 
                    border border-secondary/30 hover:border-secondary hover:shadow-[0_0_30px_hsl(var(--secondary)/0.3)]
                    transition-all duration-300 group"

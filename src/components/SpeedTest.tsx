@@ -7,6 +7,7 @@ import ShareResults from "./ShareResults";
 import IpDisplay from "./IpDisplay";
 import { useSpeedTest } from "@/hooks/useSpeedTest";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSound } from "@/contexts/SoundContext";
 import { SpeedResult } from "@/hooks/useSpeedHistory";
 import { 
   Download, 
@@ -27,23 +28,48 @@ const SpeedTest = ({ onTestComplete }: SpeedTestProps) => {
   const [selectedServer, setSelectedServer] = useState<ServerOption>(SERVERS[0]);
   const { testing, phase, currentSpeed, progress, results, runSpeedTest } = useSpeedTest();
   const { t } = useLanguage();
+  const { playSound, initAudioContext } = useSound();
   const lastPhaseRef = useRef(phase);
 
-  // Save result when test completes
+  // Play sounds on phase changes
   useEffect(() => {
-    if (lastPhaseRef.current !== "complete" && phase === "complete" && onTestComplete) {
-      onTestComplete({
-        download: results.download,
-        upload: results.upload,
-        ping: results.ping,
-        jitter: results.jitter,
-        server: selectedServer.name,
-        ip: results.ip,
-        isp: results.isp,
-      });
+    if (lastPhaseRef.current !== phase) {
+      switch (phase) {
+        case "ping":
+          playSound("start");
+          setTimeout(() => playSound("ping"), 300);
+          break;
+        case "download":
+          playSound("download");
+          break;
+        case "upload":
+          playSound("upload");
+          break;
+        case "complete":
+          playSound("complete");
+          if (onTestComplete) {
+            onTestComplete({
+              download: results.download,
+              upload: results.upload,
+              ping: results.ping,
+              jitter: results.jitter,
+              server: selectedServer.name,
+              ip: results.ip,
+              isp: results.isp,
+            });
+          }
+          break;
+      }
     }
     lastPhaseRef.current = phase;
-  }, [phase, results, onTestComplete, selectedServer]);
+  }, [phase, results, onTestComplete, selectedServer, playSound]);
+
+  const handleStartTest = async () => {
+    // Initialize audio context on user interaction
+    initAudioContext();
+    playSound("click");
+    runSpeedTest();
+  };
 
   const getPhaseText = () => {
     switch (phase) {
@@ -69,7 +95,10 @@ const SpeedTest = ({ onTestComplete }: SpeedTestProps) => {
         <div className="animate-fade-in">
           <ServerSelector 
             selectedServer={selectedServer} 
-            onSelectServer={setSelectedServer}
+            onSelectServer={(server) => {
+              playSound("click");
+              setSelectedServer(server);
+            }}
             disabled={testing}
           />
         </div>
@@ -146,7 +175,7 @@ const SpeedTest = ({ onTestComplete }: SpeedTestProps) => {
         {/* Start Button & Share */}
         <div className="flex items-center gap-4 flex-wrap justify-center">
           <CyberButton
-            onClick={runSpeedTest}
+            onClick={handleStartTest}
             disabled={testing}
             loading={testing}
             size="lg"
