@@ -24,6 +24,39 @@ interface Translations {
   isp: string;
   realMeasurement: string;
   
+  // Server Selection
+  selectServer: string;
+  serverLocation: string;
+  
+  // IP Display
+  yourConnection: string;
+  networkDetails: string;
+  connected: string;
+  location: string;
+  
+  // Speed Comparison
+  speedComparison: string;
+  comparedToAverages: string;
+  egyptAverage: string;
+  middleEastAverage: string;
+  globalAverage: string;
+  betterThan: string;
+  worsenThan: string;
+  average: string;
+  excellent: string;
+  veryGood: string;
+  good: string;
+  fair: string;
+  poor: string;
+  
+  // Share Results
+  shareResults: string;
+  mySpeedResults: string;
+  testedWith: string;
+  speedTest: string;
+  copyResults: string;
+  copied: string;
+  
   // Features
   featuresTitle: string;
   featuresSubtitle: string;
@@ -43,7 +76,6 @@ interface Translations {
   // Footer
   developedBy: string;
   developerName: string;
-  location: string;
   allRightsReserved: string;
   
   // History
@@ -82,6 +114,39 @@ const translations: Record<Language, Translations> = {
     isp: "مزود الخدمة",
     realMeasurement: "قياس حقيقي عبر Cloudflare CDN",
     
+    // Server Selection
+    selectServer: "اختر السيرفر",
+    serverLocation: "موقع السيرفر",
+    
+    // IP Display
+    yourConnection: "اتصالك",
+    networkDetails: "تفاصيل الشبكة",
+    connected: "متصل",
+    location: "الموقع",
+    
+    // Speed Comparison
+    speedComparison: "مقارنة السرعة",
+    comparedToAverages: "مقارنة بالمتوسطات",
+    egyptAverage: "متوسط مصر",
+    middleEastAverage: "متوسط الشرق الأوسط",
+    globalAverage: "المتوسط العالمي",
+    betterThan: "أفضل من المتوسط",
+    worsenThan: "أقل من المتوسط",
+    average: "متوسط",
+    excellent: "ممتاز",
+    veryGood: "جيد جداً",
+    good: "جيد",
+    fair: "مقبول",
+    poor: "ضعيف",
+    
+    // Share Results
+    shareResults: "مشاركة النتائج",
+    mySpeedResults: "نتائج سرعة الإنترنت",
+    testedWith: "تم الاختبار بواسطة",
+    speedTest: "اختبار السرعة",
+    copyResults: "نسخ النتائج",
+    copied: "تم النسخ!",
+    
     // Features
     featuresTitle: "مميزات SPEDRA",
     featuresSubtitle: "تقنيات متطورة لقياس سرعة الإنترنت",
@@ -101,7 +166,6 @@ const translations: Record<Language, Translations> = {
     // Footer
     developedBy: "تم التطوير بواسطة",
     developerName: "أحمد نور أحمد",
-    location: "قنا، مصر",
     allRightsReserved: "جميع الحقوق محفوظة",
     
     // History
@@ -138,6 +202,39 @@ const translations: Record<Language, Translations> = {
     isp: "ISP",
     realMeasurement: "Real measurement via Cloudflare CDN",
     
+    // Server Selection
+    selectServer: "Select Server",
+    serverLocation: "Server Location",
+    
+    // IP Display
+    yourConnection: "Your Connection",
+    networkDetails: "Network Details",
+    connected: "Connected",
+    location: "Location",
+    
+    // Speed Comparison
+    speedComparison: "Speed Comparison",
+    comparedToAverages: "Compared to Averages",
+    egyptAverage: "Egypt Average",
+    middleEastAverage: "Middle East Average",
+    globalAverage: "Global Average",
+    betterThan: "better than avg",
+    worsenThan: "below avg",
+    average: "Average",
+    excellent: "Excellent",
+    veryGood: "Very Good",
+    good: "Good",
+    fair: "Fair",
+    poor: "Poor",
+    
+    // Share Results
+    shareResults: "Share Results",
+    mySpeedResults: "My Speed Results",
+    testedWith: "Tested with",
+    speedTest: "Speed Test",
+    copyResults: "Copy Results",
+    copied: "Copied!",
+    
     // Features
     featuresTitle: "SPEDRA Features",
     featuresSubtitle: "Advanced technologies for internet speed measurement",
@@ -157,7 +254,6 @@ const translations: Record<Language, Translations> = {
     // Footer
     developedBy: "Developed by",
     developerName: "Ahmed Nour Ahmed",
-    location: "Qena, Egypt",
     allRightsReserved: "All rights reserved",
     
     // History

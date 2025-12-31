@@ -1,6 +1,10 @@
 import SpeedGauge from "./SpeedGauge";
 import CyberButton from "./CyberButton";
 import DataPanel from "./DataPanel";
+import ServerSelector, { SERVERS, ServerOption } from "./ServerSelector";
+import SpeedComparison from "./SpeedComparison";
+import ShareResults from "./ShareResults";
+import IpDisplay from "./IpDisplay";
 import { useSpeedTest } from "@/hooks/useSpeedTest";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SpeedResult } from "@/hooks/useSpeedHistory";
@@ -13,13 +17,14 @@ import {
   Activity,
   Zap
 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface SpeedTestProps {
   onTestComplete?: (result: Omit<SpeedResult, "id" | "timestamp">) => void;
 }
 
 const SpeedTest = ({ onTestComplete }: SpeedTestProps) => {
+  const [selectedServer, setSelectedServer] = useState<ServerOption>(SERVERS[0]);
   const { testing, phase, currentSpeed, progress, results, runSpeedTest } = useSpeedTest();
   const { t } = useLanguage();
   const lastPhaseRef = useRef(phase);
@@ -32,13 +37,13 @@ const SpeedTest = ({ onTestComplete }: SpeedTestProps) => {
         upload: results.upload,
         ping: results.ping,
         jitter: results.jitter,
-        server: results.server,
+        server: selectedServer.name,
         ip: results.ip,
         isp: results.isp,
       });
     }
     lastPhaseRef.current = phase;
-  }, [phase, results, onTestComplete]);
+  }, [phase, results, onTestComplete, selectedServer]);
 
   const getPhaseText = () => {
     switch (phase) {
@@ -58,7 +63,21 @@ const SpeedTest = ({ onTestComplete }: SpeedTestProps) => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4">
+    <div className="w-full max-w-6xl mx-auto px-4">
+      {/* Server Selector & IP Display */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="animate-fade-in">
+          <ServerSelector 
+            selectedServer={selectedServer} 
+            onSelectServer={setSelectedServer}
+            disabled={testing}
+          />
+        </div>
+        <div className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <IpDisplay />
+        </div>
+      </div>
+
       {/* Main Speed Display */}
       <div className="flex flex-col items-center mb-12">
         {/* Phase indicator */}
@@ -124,17 +143,31 @@ const SpeedTest = ({ onTestComplete }: SpeedTestProps) => {
           </div>
         </div>
 
-        {/* Start Button */}
-        <CyberButton
-          onClick={runSpeedTest}
-          disabled={testing}
-          loading={testing}
-          size="lg"
-          variant="primary"
-          className="min-w-[200px] animate-scale-in"
-        >
-          {testing ? t.testing : t.startTest}
-        </CyberButton>
+        {/* Start Button & Share */}
+        <div className="flex items-center gap-4 flex-wrap justify-center">
+          <CyberButton
+            onClick={runSpeedTest}
+            disabled={testing}
+            loading={testing}
+            size="lg"
+            variant="primary"
+            className="min-w-[200px] animate-scale-in"
+          >
+            {testing ? t.testing : t.startTest}
+          </CyberButton>
+          
+          {phase === "complete" && (
+            <ShareResults 
+              downloadSpeed={results.download}
+              uploadSpeed={results.upload}
+              ping={results.ping}
+              jitter={results.jitter}
+              server={selectedServer.name}
+              ip={results.ip}
+              isp={results.isp}
+            />
+          )}
+        </div>
         
         {/* Real test indicator */}
         <p className="mt-4 text-xs text-muted-foreground font-mono flex items-center gap-2 animate-fade-in">
@@ -188,7 +221,7 @@ const SpeedTest = ({ onTestComplete }: SpeedTestProps) => {
         <div className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
           <DataPanel
             title={t.server}
-            value={results.server}
+            value={selectedServer.name}
             icon={<Server className="w-4 h-4" />}
             color="green"
           />
@@ -210,6 +243,13 @@ const SpeedTest = ({ onTestComplete }: SpeedTestProps) => {
           />
         </div>
       </div>
+
+      {/* Speed Comparison */}
+      <SpeedComparison 
+        downloadSpeed={results.download}
+        uploadSpeed={results.upload}
+        ping={results.ping}
+      />
     </div>
   );
 };
