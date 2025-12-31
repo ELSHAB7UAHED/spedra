@@ -212,13 +212,13 @@ export const useSpeedTest = () => {
     return speeds.reduce((a, b) => a + b, 0) / speeds.length;
   };
 
-  // Get IP info
+  // Get IP info - show real IP
   const getIpInfo = async (): Promise<{ ip: string; isp: string }> => {
     try {
       const response = await fetch("https://speed.cloudflare.com/meta");
       const data = await response.json();
       return {
-        ip: data.clientIp ? data.clientIp.replace(/\.\d+\.\d+$/, ".xxx.xxx") : "---",
+        ip: data.clientIp || "---",
         isp: data.asOrganization || "---",
       };
     } catch (e) {

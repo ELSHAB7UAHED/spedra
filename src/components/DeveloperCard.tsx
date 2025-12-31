@@ -105,7 +105,8 @@ const DeveloperCard = () => {
                       <img 
                         src={developerPhoto} 
                         alt={t.developerName}
-                        className="w-full h-full object-cover object-top rounded-full"
+                        className="w-full h-full object-cover rounded-full"
+                        style={{ objectPosition: "center 20%" }}
                       />
                     </div>
                   </div>
