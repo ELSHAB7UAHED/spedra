@@ -5,6 +5,7 @@ import Features from "@/components/Features";
 import DeveloperCard from "@/components/DeveloperCard";
 import SpeedHistory from "@/components/SpeedHistory";
 import Footer from "@/components/Footer";
+import InstallPWA from "@/components/InstallPWA";
 import { Helmet } from "react-helmet";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SpeedResult } from "@/hooks/useSpeedHistory";
@@ -64,6 +65,9 @@ const Index = () => {
           
           <Footer />
         </main>
+
+        {/* PWA Install Prompt */}
+        <InstallPWA />
       </div>
     </>
   );
