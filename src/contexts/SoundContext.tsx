@@ -11,7 +11,8 @@ type SoundType =
   | "hover" 
   | "success" 
   | "error"
-  | "notification";
+  | "notification"
+  | "keypress";
 
 interface SoundContextType {
   playSound: (type: SoundType) => Promise<void>;

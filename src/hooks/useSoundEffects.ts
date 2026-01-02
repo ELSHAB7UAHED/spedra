@@ -10,7 +10,8 @@ type SoundType =
   | "hover" 
   | "success" 
   | "error"
-  | "notification";
+  | "notification"
+  | "keypress";
 
 interface SoundConfig {
   frequencies: number[];
@@ -90,6 +91,13 @@ const SOUND_CONFIGS: Record<SoundType, SoundConfig> = {
     types: ["sine", "sine", "sine"],
     volumes: [0.18, 0.2, 0.15],
     delays: [0, 0.08, 0.16],
+  },
+  keypress: {
+    frequencies: [2000, 2500],
+    durations: [0.015, 0.01],
+    types: ["square", "square"],
+    volumes: [0.04, 0.02],
+    delays: [0, 0.008],
   },
 };
 
