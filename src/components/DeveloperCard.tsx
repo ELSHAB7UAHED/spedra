@@ -1,11 +1,17 @@
 import developerPhoto from "@/assets/developer-photo.png";
 import { Globe, Mail, Phone, Code2, Terminal, Cpu, Rocket, Shield, Wifi, Database, Lock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSound } from "@/contexts/SoundContext";
 
 const DeveloperCard = () => {
   const { t, isRTL } = useLanguage();
+  const { playSound } = useSound();
 
   const skills = ["React", "TypeScript", "Node.js", "Next.js", "AI/ML"];
+
+  const handleHover = () => {
+    playSound("keypress");
+  };
 
   return (
     <section className="py-16 px-4 relative">
@@ -146,6 +152,7 @@ const DeveloperCard = () => {
                     {skills.map((skill, index) => (
                       <span 
                         key={skill}
+                        onMouseEnter={handleHover}
                         className="group/skill relative px-4 py-2 rounded-lg bg-green-400/5 border border-green-400/30 text-sm font-mono text-green-400 hover:bg-green-400/15 hover:border-green-400/60 transition-all duration-300 cursor-default overflow-hidden"
                       >
                         {/* Hover shine effect */}
@@ -164,6 +171,7 @@ const DeveloperCard = () => {
                       href="https://ahmednour.vercel.app" 
                       target="_blank" 
                       rel="noopener noreferrer"
+                      onMouseEnter={handleHover}
                       className="group/link flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1a1f1a] border border-green-400/30 text-foreground hover:border-green-400 hover:bg-green-400/10 transition-all duration-300"
                     >
                       <Globe className="w-4 h-4 text-green-400 group-hover/link:animate-pulse" />
@@ -172,6 +180,7 @@ const DeveloperCard = () => {
                     
                     <a 
                       href="mailto:amedelshab7@gmail.com"
+                      onMouseEnter={handleHover}
                       className="group/link flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1a1f1a] border border-primary/30 text-foreground hover:border-primary hover:bg-primary/10 transition-all duration-300"
                     >
                       <Mail className="w-4 h-4 text-primary group-hover/link:animate-pulse" />
@@ -180,6 +189,7 @@ const DeveloperCard = () => {
                     
                     <a 
                       href="tel:+201014812328"
+                      onMouseEnter={handleHover}
                       className="group/link flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1a1f1a] border border-secondary/30 text-foreground hover:border-secondary hover:bg-secondary/10 transition-all duration-300"
                     >
                       <Phone className="w-4 h-4 text-secondary group-hover/link:animate-pulse" />
@@ -193,17 +203,17 @@ const DeveloperCard = () => {
             {/* Bottom Stats Bar */}
             <div className="px-6 pb-6">
               <div className="flex flex-wrap items-center justify-center gap-4 py-3 px-4 rounded-lg bg-[#1a1f1a] border border-green-400/20">
-                <div className="flex items-center gap-2 px-3 py-1 rounded bg-green-400/10">
+                <div onMouseEnter={handleHover} className="flex items-center gap-2 px-3 py-1 rounded bg-green-400/10 cursor-default">
                   <Cpu className="w-4 h-4 text-green-400" />
                   <span className="text-sm font-mono text-green-400">5+ {isRTL ? 'سنوات' : 'YRS'}</span>
                 </div>
                 <div className="hidden sm:block w-px h-4 bg-green-400/30" />
-                <div className="flex items-center gap-2 px-3 py-1 rounded bg-primary/10">
+                <div onMouseEnter={handleHover} className="flex items-center gap-2 px-3 py-1 rounded bg-primary/10 cursor-default">
                   <Rocket className="w-4 h-4 text-primary" />
                   <span className="text-sm font-mono text-primary">50+ {isRTL ? 'مشروع' : 'PROJECTS'}</span>
                 </div>
                 <div className="hidden sm:block w-px h-4 bg-green-400/30" />
-                <div className="flex items-center gap-2 px-3 py-1 rounded bg-secondary/10">
+                <div onMouseEnter={handleHover} className="flex items-center gap-2 px-3 py-1 rounded bg-secondary/10 cursor-default">
                   <Terminal className="w-4 h-4 text-secondary" />
                   <span className="text-sm font-mono text-secondary">{isRTL ? 'متاح' : 'AVAILABLE'}</span>
                 </div>
